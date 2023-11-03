@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFakeUser } from "../../service/createFakeUsers";
 import styled from "@emotion/styled";
 import UserItem from "../common/user/UserList";
-import { User } from "../../models/User";
 import Button from "../common/Button";
 import TextArea from "../common/TextArea";
 import UserToolBox from "../common/user/UserToolBox";
+import { useUsers } from "../../hooks/useUsers";
 
 function Users() {
-    const [users, setUsers] = useState<User[]>([]);
+
+    const {users, loading, setUsers, deleteUser} = useUsers();
+
     const [filter, setFilter] = useState("");
-    const [loading, setLoading] = useState(true);
     const shownUsers = useMemo(()=>{
       if (!filter) return users;
       return users.filter((user) => user.name.toLowerCase().includes(filter.toLowerCase())) 
@@ -21,17 +22,6 @@ function Users() {
         setUsers([...users, ...newUser]);
     };
 
-    const deleteUser = (id: number) => {
-        const newUsers = users.filter((user) => user.id !== id);
-        setUsers(newUsers);
-    };
-
-    useEffect(() => {
-        setTimeout(() => {
-            setUsers(createFakeUser(10));
-            setLoading(false);
-        }, 1000);
-    }, []);
     if (loading) return <h1>Chargement...</h1>;
     return (
         <>
